@@ -3,20 +3,26 @@ from telegram.ext import *
 import mysql.connector
 import responses
 
-mydb = mysql.connector.connect(host="locaclhost", user="root", host="password123")
+mydb = mysql.connector.connect(host='localhost', user='root', password='password123', database='telegrambot')
+
+cursor = mydb.cursor()
+
+
 API_KEY = '6037321190:AAHGwdvHhJi78wQAz5ALTHmN5jEWZspAuGg'
 
 # set up the logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logging.info('Starting Bot...')
 
-def signup_command(update, context):
-    update.message.reply_text('Enter your first name')
-    update.message.reply_text('Enter your last name')
-    update.message.reply_text('Enter your phone number')
-    update.message.reply_text('Enter the department you do seva in')
-    update.message.reply_text('Are you the lead of this department? (YES/NO)')
 
+def signup_command(update, context):
+    update.message.reply_text('Hi I am here to help')
+
+    sender_id = (update.message.from_user.id,)
+
+    sql_command = "INSERT INTO user (id, firstName, lastName, phoneNumber, Department, Position) VALUES (%s, NULL, NULL, NULL, NULL, NULL);"
+    cursor.execute(sql_command, sender_id)
+    mydb.commit()
 
 def budgetrequest_command(update, context):
         update.message.reply_text('Hi I am here to help')
@@ -43,6 +49,7 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('signup', signup_command))
     dp.add_handler(CommandHandler('budgetrequest',  budgetrequest_command))
     dp.add_handler(CommandHandler('receiptsubmission', receiptsubmission_command))
+
 
     # Messages
     dp.add_handler(MessageHandler(Filters.text, handle_message))
